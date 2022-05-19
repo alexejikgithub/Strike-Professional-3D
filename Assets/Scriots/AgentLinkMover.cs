@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System;
 
 public enum OffMeshLinkMoveMethod
 {
@@ -16,6 +17,9 @@ public class AgentLinkMover : MonoBehaviour
     public OffMeshLinkMoveMethod m_Method = OffMeshLinkMoveMethod.Parabola;
     public AnimationCurve m_Curve = new AnimationCurve();
 
+    public Action OnLinkStart;
+    public Action OnLinkEnd;
+
     IEnumerator Start()
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
@@ -25,6 +29,8 @@ public class AgentLinkMover : MonoBehaviour
             
             if (agent.isOnOffMeshLink)
             {
+                OnLinkStart?.Invoke();
+
                 if (m_Method == OffMeshLinkMoveMethod.NormalSpeed)
                     yield return StartCoroutine(NormalSpeed(agent));
                 else if (m_Method == OffMeshLinkMoveMethod.Parabola)
@@ -32,6 +38,7 @@ public class AgentLinkMover : MonoBehaviour
                 else if (m_Method == OffMeshLinkMoveMethod.Curve)
                     yield return StartCoroutine(Curve(agent, 0.5f));
                 agent.CompleteOffMeshLink();
+               
             }
             yield return null;
         }
@@ -47,6 +54,7 @@ public class AgentLinkMover : MonoBehaviour
             agent.transform.position = Vector3.MoveTowards(agent.transform.position, endPos, agent.speed * Time.deltaTime);
             yield return null;
         }
+        OnLinkEnd?.Invoke();
     }
 
     IEnumerator Parabola(NavMeshAgent agent, float height, float duration)
@@ -62,6 +70,7 @@ public class AgentLinkMover : MonoBehaviour
             normalizedTime += Time.deltaTime / duration;
             yield return null;
         }
+        OnLinkEnd?.Invoke();
     }
 
     IEnumerator Curve(NavMeshAgent agent, float duration)
@@ -77,5 +86,6 @@ public class AgentLinkMover : MonoBehaviour
             normalizedTime += Time.deltaTime / duration;
             yield return null;
         }
+        OnLinkEnd?.Invoke();
     }
 }
