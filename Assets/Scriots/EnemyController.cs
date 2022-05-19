@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour
 {
 
 	[SerializeField] private int _maxHealth;
+	[SerializeField] private RagdollComponent _ragdolll;
 
 	private int _currentHealth;
 	private bool _isDead;
@@ -20,9 +21,10 @@ public class EnemyController : MonoBehaviour
 		_currentHealth = _maxHealth;
 		_isDead = false;
 	}
+	
 
-
-	private void TakeDamage(int damageValue)
+	
+	public void TakeDamage(int damageValue)
 	{
 		_currentHealth -= damageValue;
 
@@ -35,6 +37,7 @@ public class EnemyController : MonoBehaviour
 	private void Die()
 	{
 		_isDead = true;
+		_ragdolll.ActivateRagdoll();
 		OnDeath?.Invoke();
 
 	}
