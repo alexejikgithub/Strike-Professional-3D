@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class CharacterMovementController : MonoBehaviour
+public class MainCharacterController : MonoBehaviour
 {
 
 	[SerializeField] private WayPointComponent[] _wayPoints;
@@ -25,7 +25,7 @@ public class CharacterMovementController : MonoBehaviour
 
 	private void Update()
 	{
-		if (!_agent.pathPending && _agent.remainingDistance < 0.5f)
+		if (!_agent.pathPending && _agent.remainingDistance < 0.5f && _wayPoints[_wayPointIndex].IsWPClear)
 		{
 			SetNextWayPoint();
 		}
@@ -39,15 +39,12 @@ public class CharacterMovementController : MonoBehaviour
 
 	private void SetNextWayPoint()
 	{
-		if (_wayPointIndex < _wayPoints.Length - 1 && _wayPoints[_wayPointIndex].IsWPClear)
+		if (_wayPointIndex < _wayPoints.Length - 1)
 		{
 
 			_wayPointIndex++;
 			SetWaypoint(_wayPoints[_wayPointIndex]);
-
-
 		}
-
 	}
 
 
