@@ -5,20 +5,33 @@ using UnityEngine;
 public class FireController : MonoBehaviour
 {
 
-	[SerializeField] private InteractableCanvasObject _input;
 	[SerializeField] private float _projectileSpeed;
+	[SerializeField] private InteractableCanvasObject _input;
 	[SerializeField] private Transform _shootPositionl;
 	[SerializeField] private ObjectPoolController _pool;
+
+
+	private LevelManager _manager;
+	private bool _isGamplayOn => _manager.IsGameplayOn;
+
 
 	private void Awake()
 	{
 		_input.OnPointerDownEvent += OnTap;
 	}
 
-
+	public void SetManager(LevelManager manager)
+	{
+		_manager = manager;
+	}
 	private void OnTap(Vector3 position)
 	{
-		ShootProjectile();
+		Debug.Log(_isGamplayOn);
+		if(_isGamplayOn)
+		{
+			ShootProjectile();
+		}
+		
 	}
 
 	private void ShootProjectile()
@@ -37,4 +50,9 @@ public class FireController : MonoBehaviour
 
 	}
 
+	private void OnDestroy()
+	{
+		_input.OnPointerDownEvent -= OnTap;
+
+	}
 }

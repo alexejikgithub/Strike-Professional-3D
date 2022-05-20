@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,8 +11,12 @@ public class MainCharacterController : MonoBehaviour
 	[SerializeField] private WayPointComponent[] _wayPoints;
 
 	private NavMeshAgent _agent;
-
 	private int _wayPointIndex = 0;
+	public Action OnLastWPReached;
+	private bool _isLastWaypointReached=false;
+
+	private LevelManager _manager;
+	private bool _isGamplayOn =>_manager.IsGameplayOn;
 
 	private void Awake()
 	{
@@ -20,15 +25,27 @@ public class MainCharacterController : MonoBehaviour
 
 	private void Start()
 	{
-		SetWaypoint(_wayPoints[_wayPointIndex]);
+		transform.position = _wayPoints[0].transform.position;
 	}
+
+
 
 	private void Update()
 	{
+		if(!_isGamplayOn)
+		{
+			return;
+		}
+
 		if (!_agent.pathPending && _agent.remainingDistance < 0.5f && _wayPoints[_wayPointIndex].IsWPClear)
 		{
 			SetNextWayPoint();
 		}
+	}
+
+	public void SetManager(LevelManager manager)
+	{
+		_manager = manager;
 	}
 
 
@@ -39,11 +56,19 @@ public class MainCharacterController : MonoBehaviour
 
 	private void SetNextWayPoint()
 	{
+
+	
+
 		if (_wayPointIndex < _wayPoints.Length - 1)
 		{
-
 			_wayPointIndex++;
 			SetWaypoint(_wayPoints[_wayPointIndex]);
+		}
+		else if(!_isLastWaypointReached)
+		{
+			_isLastWaypointReached = true;
+			OnLastWPReached?.Invoke();
+			
 		}
 	}
 
