@@ -28,7 +28,16 @@ public class ProjectileComponent : MonoBehaviour,IPoolObject
 
 	private void OnTriggerEnter(Collider other)
 	{
+
+		Debug.Log(other.name);
+		EnemySegment segment = other.GetComponent<EnemySegment>();
+		if(segment!=null)
+		{
+			
+			segment.TakeDamage();
+		}
 		RemoveObject();
+		
 	}
 
 

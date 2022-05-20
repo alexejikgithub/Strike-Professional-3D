@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour
 
 	[SerializeField] private int _maxHealth;
 	[SerializeField] private RagdollComponent _ragdolll;
+	[SerializeField] private EnemySegment[] _segments;
 
 	private int _currentHealth;
 	private bool _isDead;
@@ -20,6 +21,11 @@ public class EnemyController : MonoBehaviour
 	{
 		_currentHealth = _maxHealth;
 		_isDead = false;
+
+		foreach(EnemySegment segment in _segments)
+		{
+			segment.OnTakeDamage += TakeDamage;
+		}
 	}
 	
 
@@ -40,6 +46,13 @@ public class EnemyController : MonoBehaviour
 		_ragdolll.ActivateRagdoll();
 		OnDeath?.Invoke();
 
+	}
+	private void OnDestroy()
+	{
+		foreach (EnemySegment segment in _segments)
+		{
+			segment.OnTakeDamage -= TakeDamage;
+		}
 	}
 
 }

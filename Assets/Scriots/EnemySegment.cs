@@ -1,18 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySegment : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[SerializeField] int _damageValue;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public Action<int> OnTakeDamage; 
+
+	public void TakeDamage()
+	{
+		OnTakeDamage?.Invoke(_damageValue);
+	}
 }
