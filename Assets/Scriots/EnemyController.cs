@@ -6,14 +6,13 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
 
-	
+
 	[SerializeField] private RagdollComponent _ragdolll;
 	[SerializeField] private EnemySegment[] _segments;
 
 	[Header("Health")]
 	[SerializeField] private int _maxHealth;
-	[SerializeField] private Canvas _hUDCanvas;
-	[SerializeField] private HealthBarComponent _healthBarPrefab;
+	[SerializeField] private ObjectPoolController _HPBarPool;
 
 
 	private HealthBarComponent _healthBar;
@@ -29,34 +28,41 @@ public class EnemyController : MonoBehaviour
 		_currentHealth = _maxHealth;
 		_isDead = false;
 
-		foreach(EnemySegment segment in _segments)
+		foreach (EnemySegment segment in _segments)
 		{
 			segment.OnTakeDamage += TakeDamage;
 		}
 		SetHealthBar();
 	}
-	
+
 	private void SetHealthBar()
 	{
-		_healthBar =Instantiate(_healthBarPrefab);
-		_healthBar.transform.parent = _hUDCanvas.transform;
+		_healthBar = _HPBarPool.GetPooledGameObject().GetComponent<HealthBarComponent>();
 		_healthBar.SetTarget(this.transform);
+		_healthBar.SetPool(_HPBarPool);
 	}
-	
+
+	private void RemoveHealthBar()
+	{
+		_healthBar.RemoveObject();
+	}
+
 	public void TakeDamage(int damageValue)
 	{
 		_currentHealth -= damageValue;
-
-		if(_currentHealth<= 0)
+		_healthBar.SetFillAmount( (float)_currentHealth / _maxHealth);
+		if (_currentHealth <= 0)
 		{
 			Die();
 		}
+
 	}
 
 	private void Die()
 	{
 		_isDead = true;
 		_ragdolll.ActivateRagdoll();
+		RemoveHealthBar();
 		OnDeath?.Invoke();
 
 	}
