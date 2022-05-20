@@ -40,6 +40,7 @@ public class EnemyController : MonoBehaviour
 		_healthBar = _HPBarPool.GetPooledGameObject().GetComponent<HealthBarComponent>();
 		_healthBar.SetTarget(this.transform);
 		_healthBar.SetPool(_HPBarPool);
+		_healthBar.SetFillAmount(1);
 	}
 
 	private void RemoveHealthBar()
