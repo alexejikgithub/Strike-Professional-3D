@@ -6,22 +6,14 @@ public class ObjectPoolController : MonoBehaviour
 {
 	[SerializeField] private List<GameObject> _pooledObjects;
 	[SerializeField] private GameObject _objectToPool;
-	[SerializeField] private int _amountToPool;
+
 
 	private GameObject _currentElement;
 
 
 	private void Start()
 	{
-		_pooledObjects = new List<GameObject>();
 
-		for (int i = 0; i < _amountToPool; i++)
-		{
-			_currentElement = Instantiate(_objectToPool, transform.parent);
-			_currentElement.SetActive(false);
-			_pooledObjects.Add(_currentElement);
-			_currentElement.transform.parent = this.transform;
-		}
 	}
 
 
@@ -36,7 +28,7 @@ public class ObjectPoolController : MonoBehaviour
 		}
 		else
 		{
-			_currentElement = Instantiate(_objectToPool, transform.parent);
+			_currentElement = Instantiate(_objectToPool, transform);
 			return _currentElement;
 		}
 
