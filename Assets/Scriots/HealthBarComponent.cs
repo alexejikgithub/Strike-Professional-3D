@@ -15,6 +15,7 @@ public class HealthBarComponent : MonoBehaviour, IPoolObject
 	private void LateUpdate()
 	{
 		transform.position = Camera.main.WorldToScreenPoint(_target.position + _offset);
+		transform.localScale = Vector3.one/Vector3.Distance(_target.position, Camera.main.transform.position)*10;
 	}
 
 	public void SetTarget(Transform target)
