@@ -18,10 +18,6 @@ namespace Scripts
             CheckIfCleared();
         }
 
-        private void Start()
-        {
-        }
-
 
         private void OnDrawGizmos()
         {

@@ -11,10 +11,10 @@ namespace Scripts
         private void Start()
         {
             _rigidBodies = GetComponentsInChildren<Rigidbody>();
-            DeavrivateRagdoll();
+            DeactivateRagdoll();
         }
 
-        private void DeavrivateRagdoll()
+        private void DeactivateRagdoll()
         {
             foreach (var rb in _rigidBodies) rb.isKinematic = true;
             _animator.enabled = true;

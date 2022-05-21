@@ -1,4 +1,5 @@
 using System.Collections;
+using Scripts.Pool;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,9 @@ namespace Scripts
         [SerializeField] private Vector3 _offset;
         [SerializeField] private Image _bar;
         [SerializeField] private float _lerpTime = 0.5f;
+        [SerializeField] private float _barSizemultiplier = 10;
 
+        
         private Transform _target;
         private ObjectPoolController _pool;
 
@@ -18,7 +21,7 @@ namespace Scripts
         private void LateUpdate()
         {
             transform.position = Camera.main.WorldToScreenPoint(_target.position + _offset);
-            transform.localScale = Vector3.one / Vector3.Distance(_target.position, Camera.main.transform.position) * 10;
+            transform.localScale = Vector3.one / Vector3.Distance(_target.position, Camera.main.transform.position) * _barSizemultiplier;
         }
 
         public void SetTarget(Transform target)

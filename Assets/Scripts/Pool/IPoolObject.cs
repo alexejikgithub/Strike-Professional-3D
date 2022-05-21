@@ -1,5 +1,8 @@
-public interface IPoolObject
+namespace Scripts.Pool
 {
-    public void SetPool(ObjectPoolController pool);
-    public void RemoveObject();
+    public interface IPoolObject
+    {
+        public void SetPool(ObjectPoolController pool);
+        public void RemoveObject();
+    }
 }

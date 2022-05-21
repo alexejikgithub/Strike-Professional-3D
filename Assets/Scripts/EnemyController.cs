@@ -1,4 +1,5 @@
 using System;
+using Scripts.Pool;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -40,10 +41,6 @@ namespace Scripts
             _healthBar.RestoreFillAmount();
         }
 
-        private void RemoveHealthBar()
-        {
-            _healthBar.RemoveObject();
-        }
 
         private void TakeDamage(int damageValue)
         {

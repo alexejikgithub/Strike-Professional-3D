@@ -1,40 +1,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ObjectPoolController : MonoBehaviour
+namespace Scripts.Pool
 {
-    [SerializeField] private List<GameObject> _pooledObjects;
-    [SerializeField] private GameObject _objectToPool;
-
-
-    private GameObject _currentElement;
-
-
-    private void Start()
+    public class ObjectPoolController : MonoBehaviour
     {
-    }
+        [SerializeField] private List<GameObject> _pooledObjects;
+        [SerializeField] private GameObject _objectToPool;
 
 
-    public GameObject GetPooledGameObject()
-    {
-        if (_pooledObjects.Count > 0)
+        private GameObject _currentElement;
+
+
+        public GameObject GetPooledGameObject()
         {
-            _currentElement = _pooledObjects[0];
-            _currentElement.SetActive(true);
-            _pooledObjects.RemoveAt(0);
-            return _currentElement;
+            if (_pooledObjects.Count > 0)
+            {
+                _currentElement = _pooledObjects[0];
+                _currentElement.SetActive(true);
+                _pooledObjects.RemoveAt(0);
+                return _currentElement;
+            }
+            else
+            {
+                _currentElement = Instantiate(_objectToPool, transform);
+                return _currentElement;
+            }
         }
-        else
-        {
-            _currentElement = Instantiate(_objectToPool, transform);
-            return _currentElement;
-        }
-    }
 
-    public void ReturnPooledGameObject(GameObject item)
-    {
-        item.SetActive(false);
-        _pooledObjects.Add(item);
+        public void ReturnPooledGameObject(GameObject item)
+        {
+            item.SetActive(false);
+            _pooledObjects.Add(item);
+        }
     }
 }

@@ -11,10 +11,10 @@ namespace Scripts
 
         private NavMeshAgent _agent;
         private AgentLinkMover _linkMover;
-
-        private const string _isRunning = "IsRunning";
-        private const string _jumping = "Jumping";
-        private const string _landed = "Landed";
+        private static readonly int IsRunning = Animator.StringToHash("IsRunning");
+        private static readonly int Jumping = Animator.StringToHash("Jumping");
+        private static readonly int Landed = Animator.StringToHash("Landed");
+        
 
         private void Awake()
         {
@@ -36,17 +36,17 @@ namespace Scripts
 
         private void SetRunningAnimation()
         {
-            _animator.SetBool(_isRunning, _agent.velocity.magnitude > 0.5f);
+            _animator.SetBool(IsRunning, _agent.velocity.magnitude > 0.5f);
         }
 
         private void JumpStart()
         {
-            _animator.SetTrigger(_jumping);
+            _animator.SetTrigger(Jumping);
         }
 
         private void JumpEnd()
         {
-            _animator.SetTrigger(_landed);
+            _animator.SetTrigger(Landed);
         }
 
         private void OnDestroy()
