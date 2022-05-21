@@ -1,16 +1,17 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySegment : MonoBehaviour
+namespace Scripts
 {
-	[SerializeField] int _damageValue;
+    public class EnemySegment : MonoBehaviour
+    {
+        [SerializeField] private int _damageValue;
 
-	public Action<int> OnTakeDamage; 
+        public Action<int> OnTakeDamage;
 
-	public void TakeDamage()
-	{
-		OnTakeDamage?.Invoke(_damageValue);
-	}
+        public void TakeDamage()
+        {
+            OnTakeDamage?.Invoke(_damageValue);
+        }
+    }
 }

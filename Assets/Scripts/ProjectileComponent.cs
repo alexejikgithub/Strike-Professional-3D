@@ -1,44 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileComponent : MonoBehaviour,IPoolObject
+namespace Scripts
 {
-	private ObjectPoolController _pool;
+    public class ProjectileComponent : MonoBehaviour, IPoolObject
+    {
+        private ObjectPoolController _pool;
 
 
+        public void SetPool(ObjectPoolController pool)
+        {
+            _pool = pool;
+        }
 
-	public void SetPool(ObjectPoolController pool)
-	{
-		_pool = pool;
-	}
-
-	public void RemoveObject()
-	{
-		if (_pool != null)
-		{
-			_pool.ReturnPooledGameObject(this.gameObject);
-		}
-		else
-		{
-			Destroy(this.gameObject);
-		}
-	}
+        public void RemoveObject()
+        {
+            if (_pool != null)
+                _pool.ReturnPooledGameObject(gameObject);
+            else
+                Destroy(gameObject);
+        }
 
 
-	private void OnTriggerEnter(Collider other)
-	{
-
-		
-		EnemySegment segment = other.GetComponent<EnemySegment>();
-		if(segment!=null)
-		{
-			
-			segment.TakeDamage();
-		}
-		RemoveObject();
-		
-	}
-
-
+        private void OnTriggerEnter(Collider other)
+        {
+            var segment = other.GetComponent<EnemySegment>();
+            if (segment != null) segment.TakeDamage();
+            RemoveObject();
+        }
+    }
 }

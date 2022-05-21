@@ -1,4 +1,7 @@
-public interface IObserver<T>
+namespace Scripts.Observer
 {
-    void UpdateObservableData(T variable);
+    public interface IObserver<T>
+    {
+        void UpdateObservableData(T variable);
+    }
 }

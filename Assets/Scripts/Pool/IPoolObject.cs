@@ -1,5 +1,5 @@
-public interface IPoolObject 
+public interface IPoolObject
 {
-	public void SetPool(ObjectPoolController pool);
-	public void RemoveObject();
+    public void SetPool(ObjectPoolController pool);
+    public void RemoveObject();
 }

@@ -1,10 +1,11 @@
 using UnityEngine;
 
-
-public abstract class GameplayInput : MonoBehaviour
+namespace Scripts.Input
 {
-	public abstract void GameplayInputOn();
+    public abstract class GameplayInput : MonoBehaviour
+    {
+        public abstract void GameplayInputOn();
 
-	public abstract void GameplayInputOff();
-
+        public abstract void GameplayInputOff();
+    }
 }

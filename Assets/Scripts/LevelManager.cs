@@ -1,84 +1,78 @@
 using System.Collections;
 using System.Collections.Generic;
+using Scripts.Input;
+using Scripts.Observer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
-public class LevelManager : MonoBehaviour, IObservable<bool>
+namespace Scripts
 {
-	[SerializeField] private MainCharacterController _mainCharacter;
-	[SerializeField] private FireController _fireController;
-	[SerializeField] private GameObject _startMessage;
-	[SerializeField] private InteractableCanvasObject _input;
+    public class LevelManager : MonoBehaviour, IObservable<bool>
+    {
+        [SerializeField] private MainCharacterController _mainCharacter;
+        [SerializeField] private FireController _fireController;
+        [SerializeField] private GameObject _startMessage;
+        [SerializeField] private InteractableCanvasObject _input;
 
-	private List<IObserver<bool>> observers;
-
-	private bool _isGameplayOn;
-
-
-	private void Awake()
-	{
-		observers = new List<IObserver<bool>>();
-		_mainCharacter.OnLastWPReached += EndLevel;
-		_input.OnPointerDownEvent += OnTap;
-		_isGameplayOn = false;
-		AddObserver(_mainCharacter);
-		AddObserver(_fireController);
-
-	}
-	private void OnTap(Vector3 position)
-	{
-		if (_isGameplayOn)
-		{
-			return;
-		}
-		_startMessage.gameObject.SetActive(false);
-		StartCoroutine(StartGameplay());
-
-	}
-
-	private IEnumerator StartGameplay()
-	{
-		yield return new WaitForSeconds(0.5f);
-		_isGameplayOn = true;
-		NotifyObservers();
-
-	}
-
-	private void EndLevel()
-	{
-		RestartLevel();
-	}
-
-	public void RestartLevel()
-	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
+        // Used Observer pattern. Alternetively could use dependency injection
+        private List<IObserver<bool>> _observers;
+        private bool _isGameplayOn;
 
 
-	public void AddObserver(IObserver<bool> o)
-	{
-		observers.Add(o);
-	}
+        private void Awake()
+        {
+            _observers = new List<IObserver<bool>>();
+            _mainCharacter.OnLastWPReached += EndLevel;
+            _input.OnPointerDownEvent += OnTap;
+            _isGameplayOn = false;
+            AddObserver(_mainCharacter);
+            AddObserver(_fireController);
+        }
 
-	public void RemoveObserver(IObserver<bool> o)
-	{
-		observers.Remove(o);
-	}
+        private void OnTap(Vector3 position)
+        {
+            if (_isGameplayOn) return;
+            _startMessage.gameObject.SetActive(false);
+            StartCoroutine(StartGameplay());
+        }
 
-	public void NotifyObservers()
-	{
-		foreach (IObserver<bool> observer in observers)
-			observer.UpdateObservableData(_isGameplayOn);
-	}
+        private IEnumerator StartGameplay()
+        {
+            yield return new WaitForSeconds(0.5f);
+            _isGameplayOn = true;
+            NotifyObservers();
+        }
 
+        private void EndLevel()
+        {
+            RestartLevel();
+        }
 
+        private void RestartLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
 
-	private void OnDestroy()
-	{
-		_mainCharacter.OnLastWPReached -= EndLevel;
-		_input.OnPointerDownEvent -= OnTap;
-	}
+        public void AddObserver(IObserver<bool> o)
+        {
+            _observers.Add(o);
+        }
 
-	
+        public void RemoveObserver(IObserver<bool> o)
+        {
+            _observers.Remove(o);
+        }
+
+        public void NotifyObservers()
+        {
+            foreach (var observer in _observers)
+                observer.UpdateObservableData(_isGameplayOn);
+        }
+
+        private void OnDestroy()
+        {
+            _mainCharacter.OnLastWPReached -= EndLevel;
+            _input.OnPointerDownEvent -= OnTap;
+        }
+    }
 }

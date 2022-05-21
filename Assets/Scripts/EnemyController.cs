@@ -1,77 +1,64 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+namespace Scripts
 {
+    public class EnemyController : MonoBehaviour
+    {
+        [SerializeField] private RagdollComponent _ragdolll;
+        [SerializeField] private EnemySegment[] _segments;
+
+        [Header("Health")] [SerializeField] private int _maxHealth;
+        [SerializeField] private ObjectPoolController _HPBarPool;
 
 
-	[SerializeField] private RagdollComponent _ragdolll;
-	[SerializeField] private EnemySegment[] _segments;
+        private HealthBarComponent _healthBar;
+        private int _currentHealth;
+        private bool _isDead;
 
-	[Header("Health")]
-	[SerializeField] private int _maxHealth;
-	[SerializeField] private ObjectPoolController _HPBarPool;
+        public bool IsDead => _isDead;
 
+        public Action OnDeath;
 
-	private HealthBarComponent _healthBar;
-	private int _currentHealth;
-	private bool _isDead;
+        private void Awake()
+        {
+            _currentHealth = _maxHealth;
+            _isDead = false;
 
-	public bool IsDead => _isDead;
+            foreach (var segment in _segments) segment.OnTakeDamage += TakeDamage;
+            SetHealthBar();
+        }
 
-	public Action OnDeath;
+        private void SetHealthBar()
+        {
+            _healthBar = _HPBarPool.GetPooledGameObject().GetComponent<HealthBarComponent>();
+            _healthBar.SetTarget(transform);
+            _healthBar.SetPool(_HPBarPool);
+            _healthBar.RestoreFillAmount();
+        }
 
-	private void Awake()
-	{
-		_currentHealth = _maxHealth;
-		_isDead = false;
+        private void RemoveHealthBar()
+        {
+            _healthBar.RemoveObject();
+        }
 
-		foreach (EnemySegment segment in _segments)
-		{
-			segment.OnTakeDamage += TakeDamage;
-		}
-		SetHealthBar();
-	}
+        private void TakeDamage(int damageValue)
+        {
+            _currentHealth -= damageValue;
+            _healthBar.SetFillAmount((float) _currentHealth / _maxHealth);
+            if (_currentHealth <= 0) Die();
+        }
 
-	private void SetHealthBar()
-	{
-		_healthBar = _HPBarPool.GetPooledGameObject().GetComponent<HealthBarComponent>();
-		_healthBar.SetTarget(this.transform);
-		_healthBar.SetPool(_HPBarPool);
-		_healthBar.RestoreFillAmount();
-	}
+        private void Die()
+        {
+            _isDead = true;
+            _ragdolll.ActivateRagdoll();
+            OnDeath?.Invoke();
+        }
 
-	private void RemoveHealthBar()
-	{
-		_healthBar.RemoveObject();
-	}
-
-	public void TakeDamage(int damageValue)
-	{
-		_currentHealth -= damageValue;
-		_healthBar.SetFillAmount( (float)_currentHealth / _maxHealth);
-		if (_currentHealth <= 0)
-		{
-			Die();
-		}
-
-	}
-
-	private void Die()
-	{
-		_isDead = true;
-		_ragdolll.ActivateRagdoll();
-		OnDeath?.Invoke();
-
-	}
-	private void OnDestroy()
-	{
-		foreach (EnemySegment segment in _segments)
-		{
-			segment.OnTakeDamage -= TakeDamage;
-		}
-	}
-
+        private void OnDestroy()
+        {
+            foreach (var segment in _segments) segment.OnTakeDamage -= TakeDamage;
+        }
+    }
 }

@@ -1,61 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
+using Scripts.Input;
+using Scripts.Observer;
 using UnityEngine;
 
-public class FireController : MonoBehaviour, IObserver<bool>
+namespace Scripts
 {
-
-	[SerializeField] private float _projectileSpeed;
-	[SerializeField] private InteractableCanvasObject _input;
-	[SerializeField] private Transform _shootPositionl;
-	[SerializeField] private ObjectPoolController _pool;
-
-
-
-	private bool _isGamplayOn;
+    public class FireController : MonoBehaviour, IObserver<bool>
+    {
+        [SerializeField] private float _projectileSpeed;
+        [SerializeField] private InteractableCanvasObject _input;
+        [SerializeField] private Transform _shootPositionl;
+        [SerializeField] private ObjectPoolController _pool;
 
 
-	private void Awake()
-	{
-		_input.OnPointerDownEvent += OnTap;
-	}
-	public void UpdateObservableData(bool gameplayStatus)
-	{
-		_isGamplayOn = gameplayStatus;
-	}
+        private bool _isGamplayOn;
 
 
-	private void OnTap(Vector3 position)
-	{
-		
-		if(_isGamplayOn)
-		{
-			ShootProjectile();
-		}
-		
-	}
+        private void Awake()
+        {
+            _input.OnPointerDownEvent += OnTap;
+        }
 
-	private void ShootProjectile()
-	{
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hitInfo;
-		Physics.Raycast(ray, out hitInfo);
-		ProjectileComponent projectile = _pool.GetPooledGameObject().GetComponent<ProjectileComponent>();
-		if(projectile!=null)
-		{
-			projectile.SetPool(_pool);
-			projectile.transform.position = _shootPositionl.position;
-			projectile.transform.rotation = Quaternion.LookRotation(hitInfo.point);
-			projectile.GetComponent<Rigidbody>().velocity = (hitInfo.point - _shootPositionl.position).normalized * _projectileSpeed;
-		}
+        private void OnDestroy()
+        {
+            _input.OnPointerDownEvent -= OnTap;
+        }
 
-	}
+        public void UpdateObservableData(bool gameplayStatus)
+        {
+            _isGamplayOn = gameplayStatus;
+        }
 
-	private void OnDestroy()
-	{
-		_input.OnPointerDownEvent -= OnTap;
 
-	}
+        private void OnTap(Vector3 position)
+        {
+            if (_isGamplayOn) ShootProjectile();
+        }
 
-	
+        private void ShootProjectile()
+        {
+            var ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+            RaycastHit hitInfo;
+            Physics.Raycast(ray, out hitInfo);
+            var projectile = _pool.GetPooledGameObject().GetComponent<ProjectileComponent>();
+            if (projectile != null)
+            {
+                projectile.SetPool(_pool);
+                projectile.transform.position = _shootPositionl.position;
+                projectile.transform.rotation = Quaternion.LookRotation(hitInfo.point);
+                projectile.GetComponent<Rigidbody>().velocity =
+                    (hitInfo.point - _shootPositionl.position).normalized * _projectileSpeed;
+            }
+        }
+    }
 }
