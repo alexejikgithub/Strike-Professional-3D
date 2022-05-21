@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireController : MonoBehaviour
+public class FireController : MonoBehaviour, IObserver<bool>
 {
 
 	[SerializeField] private float _projectileSpeed;
@@ -11,22 +11,23 @@ public class FireController : MonoBehaviour
 	[SerializeField] private ObjectPoolController _pool;
 
 
-	private LevelManager _manager;
-	private bool _isGamplayOn => _manager.IsGameplayOn;
+
+	private bool _isGamplayOn;
 
 
 	private void Awake()
 	{
 		_input.OnPointerDownEvent += OnTap;
 	}
-
-	public void SetManager(LevelManager manager)
+	public void UpdateObservableData(bool gameplayStatus)
 	{
-		_manager = manager;
+		_isGamplayOn = gameplayStatus;
 	}
+
+
 	private void OnTap(Vector3 position)
 	{
-		Debug.Log(_isGamplayOn);
+		
 		if(_isGamplayOn)
 		{
 			ShootProjectile();
@@ -55,4 +56,6 @@ public class FireController : MonoBehaviour
 		_input.OnPointerDownEvent -= OnTap;
 
 	}
+
+	
 }

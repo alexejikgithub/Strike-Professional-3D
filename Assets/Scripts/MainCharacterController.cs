@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MainCharacterController : MonoBehaviour
+public class MainCharacterController : MonoBehaviour, IObserver<bool>
 {
 
 	[SerializeField] private WayPointComponent[] _wayPoints;
@@ -13,10 +13,10 @@ public class MainCharacterController : MonoBehaviour
 	private NavMeshAgent _agent;
 	private int _wayPointIndex = 0;
 	public Action OnLastWPReached;
-	private bool _isLastWaypointReached=false;
+	private bool _isLastWaypointReached = false;
 
-	private LevelManager _manager;
-	private bool _isGamplayOn =>_manager.IsGameplayOn;
+
+	private bool _isGamplayOn;
 
 	private void Awake()
 	{
@@ -32,7 +32,7 @@ public class MainCharacterController : MonoBehaviour
 
 	private void Update()
 	{
-		if(!_isGamplayOn)
+		if (!_isGamplayOn)
 		{
 			return;
 		}
@@ -42,10 +42,10 @@ public class MainCharacterController : MonoBehaviour
 			SetNextWayPoint();
 		}
 	}
-
-	public void SetManager(LevelManager manager)
+	
+	public void UpdateObservableData(bool gameplayStatus)
 	{
-		_manager = manager;
+		_isGamplayOn = gameplayStatus;
 	}
 
 
@@ -57,18 +57,18 @@ public class MainCharacterController : MonoBehaviour
 	private void SetNextWayPoint()
 	{
 
-	
+
 
 		if (_wayPointIndex < _wayPoints.Length - 1)
 		{
 			_wayPointIndex++;
 			SetWaypoint(_wayPoints[_wayPointIndex]);
 		}
-		else if(!_isLastWaypointReached)
+		else if (!_isLastWaypointReached)
 		{
 			_isLastWaypointReached = true;
 			OnLastWPReached?.Invoke();
-			
+
 		}
 	}
 
@@ -93,4 +93,6 @@ public class MainCharacterController : MonoBehaviour
 		Gizmos.DrawRay(finish, right * 1f);
 		Gizmos.DrawRay(finish, left * 1f);
 	}
+
+	
 }

@@ -2,30 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class LevelManager : MonoBehaviour
+
+public class LevelManager : MonoBehaviour, IObservable<bool>
 {
 	[SerializeField] private MainCharacterController _mainCharacter;
 	[SerializeField] private FireController _fireController;
 	[SerializeField] private GameObject _startMessage;
 	[SerializeField] private InteractableCanvasObject _input;
 
-	private bool _isGamplayOn;
-	public bool IsGameplayOn => _isGamplayOn;
+	private List<IObserver<bool>> observers;
+
+	private bool _isGameplayOn;
 
 
 	private void Awake()
 	{
+		observers = new List<IObserver<bool>>();
 		_mainCharacter.OnLastWPReached += EndLevel;
 		_input.OnPointerDownEvent += OnTap;
-		_isGamplayOn = false;
-		_mainCharacter.SetManager(this);
-		_fireController.SetManager(this);
+		_isGameplayOn = false;
+		AddObserver(_mainCharacter);
+		AddObserver(_fireController);
+
 	}
 	private void OnTap(Vector3 position)
 	{
-		if(_isGamplayOn)
+		if (_isGameplayOn)
 		{
 			return;
 		}
@@ -37,7 +40,9 @@ public class LevelManager : MonoBehaviour
 	private IEnumerator StartGameplay()
 	{
 		yield return new WaitForSeconds(0.5f);
-		_isGamplayOn = true;
+		_isGameplayOn = true;
+		NotifyObservers();
+
 	}
 
 	private void EndLevel()
@@ -51,9 +56,29 @@ public class LevelManager : MonoBehaviour
 	}
 
 
+	public void AddObserver(IObserver<bool> o)
+	{
+		observers.Add(o);
+	}
+
+	public void RemoveObserver(IObserver<bool> o)
+	{
+		observers.Remove(o);
+	}
+
+	public void NotifyObservers()
+	{
+		foreach (IObserver<bool> observer in observers)
+			observer.UpdateObservableData(_isGameplayOn);
+	}
+
+
+
 	private void OnDestroy()
 	{
 		_mainCharacter.OnLastWPReached -= EndLevel;
 		_input.OnPointerDownEvent -= OnTap;
 	}
+
+	
 }
