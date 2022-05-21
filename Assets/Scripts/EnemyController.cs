@@ -1,8 +1,10 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Scripts
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyController : MonoBehaviour
     {
         [SerializeField] private RagdollComponent _ragdolll;
@@ -11,10 +13,11 @@ namespace Scripts
         [Header("Health")] [SerializeField] private int _maxHealth;
         [SerializeField] private ObjectPoolController _HPBarPool;
 
-
+        private NavMeshAgent _agent;
         private HealthBarComponent _healthBar;
         private int _currentHealth;
         private bool _isDead;
+
 
         public bool IsDead => _isDead;
 
@@ -22,9 +25,9 @@ namespace Scripts
 
         private void Awake()
         {
+            _agent = GetComponent<NavMeshAgent>();
             _currentHealth = _maxHealth;
             _isDead = false;
-
             foreach (var segment in _segments) segment.OnTakeDamage += TakeDamage;
             SetHealthBar();
         }
@@ -53,6 +56,7 @@ namespace Scripts
         {
             _isDead = true;
             _ragdolll.ActivateRagdoll();
+            _agent.enabled = false;
             OnDeath?.Invoke();
         }
 

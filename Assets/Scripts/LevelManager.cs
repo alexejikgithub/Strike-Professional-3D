@@ -45,11 +45,13 @@ namespace Scripts
 
         private void EndLevel()
         {
-            RestartLevel();
+            StartCoroutine(RestartLevel());
         }
 
-        private void RestartLevel()
+        private IEnumerator RestartLevel()
         {
+
+            yield return new WaitForSeconds(2f); 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
