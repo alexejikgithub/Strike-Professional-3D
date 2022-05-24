@@ -32,7 +32,7 @@ namespace Scripts
         {
             if (!_isGamplayOn) return;
 
-            if (!_agent.pathPending && _agent.remainingDistance < 0.5f && _wayPoints[_wayPointIndex].IsWPClear)
+            if (!_agent.pathPending && _agent.remainingDistance < 2f && _wayPoints[_wayPointIndex].IsWPClear)
                 SetNextWayPoint();
         }
 
